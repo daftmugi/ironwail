@@ -1247,8 +1247,6 @@ static void Host_Loadgame_f (void)
 	COM_AddExtension (relname, ".sav", sizeof(relname));
 	Con_Printf ("Loading game from %s...\n", relname);
 
-	SCR_BeginLoadingPlaque ();
-
 	q_snprintf (name, sizeof(name), "%s/%s", com_gamedir, relname);
 	
 // avoid leaking if the previous Host_Loadgame_f failed with a Host_Error
@@ -1260,7 +1258,6 @@ static void Host_Loadgame_f (void)
 	{
 		Con_Printf ("ERROR: couldn't open.\n");
 		Host_InvalidateSave (relname);
-		SCR_EndLoadingPlaque ();
 		return;
 	}
 
@@ -1275,9 +1272,11 @@ static void Host_Loadgame_f (void)
 		else
 			Host_Error ("Savegame is version %i, not %i", version, SAVEGAME_VERSION);
 		Host_InvalidateSave (relname);
-		SCR_EndLoadingPlaque ();
 		return;
 	}
+
+	SCR_BeginLoadingPlaque ();
+
 	data = COM_ParseStringNewline (data);
 	for (i = 0; i < NUM_SPAWN_PARMS; i++)
 		data = COM_ParseFloatNewline (data, &spawn_parms[i]);
